@@ -23,8 +23,12 @@ fm_bbcode:
             xhtml: true
             filters: [ default, block, code, email, image, list, quote, text, url ]
 ```
-
-4. Load data fixtures: `php bin/console doctrine:fixtures:load --fixtures=src/AWHS/CrmBundle/DataFixtures/ORM --append`
+4. Append the following configuration to the `app/routing.yml` file:  
+```yaml
+awhs_crm:
+    resource: "@AWHSCrmBundle/Resources/config/routing.yml"
+    prefix:   /
+```
 5. Add the following code to the `src/AWHS/UserBundle/Entity/User.php` file:
 ```yaml
 /**
@@ -43,6 +47,9 @@ public function getTickets()
     return $this->tickets;
 }
 ```
+6. Update database & clear cache: `php bin/console doctrine:schema:update --force; php bin/console cache:clear; php bin/console cache:clear --env=prod`  
+You may have to set permissions back to www-data `chown -R www-data:www-data /usr/local/awhspanel/panel/*`
+7. Load data fixtures: `php bin/console doctrine:fixtures:load --fixtures=src/AWHS/CrmBundle/DataFixtures/ORM --append`
 
 ## TODO
 - [ ] Multilingual
