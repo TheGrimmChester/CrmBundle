@@ -1,0 +1,149 @@
+{% extends '::'~awhs.template~'/base_dashboard.html.twig' %}
+
+{% trans_default_domain "service" %}
+
+{% block navbarBrand %}CRM <span style="color: #d70909; ">3.0</span>{% endblock %}
+{% block title %}AWHSPanel - Créer un ticket{% endblock %}
+{% block menu_user_money %}{{ client.money }}{% endblock %}
+{% block menu_user_lastip %}{{ client.lastip }}{% endblock %}
+{% block sidebarMenuDashboardActive %} active{% endblock %}
+{% block extendJs %}
+    <script src="//cdn.ckeditor.com/4.4.6/standard-all/ckeditor.js"></script>{% endblock %}
+
+{% block fastNavigation %}
+    <ul class="breadcrumb breadcrumb-page">
+        <div class="breadcrumb-label text-dark-gray">Vous êtes ici:</div>
+        <li><a href="/tickets">Ticket</a></li>
+        <li class="active"><a href="/ticket/create">Créer</a></li>
+    </ul>{% endblock %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="row">
+            <!-- Page header, center on small screens -->
+            <h1 class="col-xs-12 col-sm-4 text-center text-left-sm"><i class="fa fa-dashboard page-header-icon"></i>&nbsp;&nbsp;Créer
+                un ticket</h1>
+        </div>
+    </div> <!-- / .page-header -->{% endblock %}
+
+{% block extendCss %}
+    <style>
+        tr th {
+            text-align: center;
+        }
+
+        tr td {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block contentHeader %}
+    <h1>
+        Créer un ticket
+        <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Panel</a></li>
+        <li><a href="{{ path('awhs_ticket_homepage') }}"> Tickets</a></li>
+        <li class="active">Créer un ticket</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box-body no-padding">
+                {{ form_start(form) }}
+                {#<div class="col-md-12">#}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ form_label(form.assignedTo) }}</label>
+                            {{ form_widget(form.assignedTo, { 'attr': {'class': 'form-control', 'placeholder': 'Entrez le nom de la personne en charge', 'list': 'json-datalist'} }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ form_label(form.priority) }}</label>
+                            {{ form_widget(form.priority, { 'attr': {'class': 'form-control', 'placeholder': ''} }) }}
+                        </div>
+                    </div>
+                {#</div>#}
+                <div class="form-group">
+                    <label>{{ form_label(form.title) }}</label>
+                    {{ form_widget(form.title, { 'attr': {'class': 'form-control', 'placeholder': 'Entrez un titre'} }) }}
+                </div>
+                <div class="form-group">
+                    <label>{{ form_label(form.message) }}</label>
+                    {{ form_widget(form.message, { 'rows': '3', 'attr': {'class': 'form-control', 'placeholder': 'Entrez votre message'} }) }}
+                </div>
+                <div class="box-footer">
+                    {{ form_rest(form) }}
+                    <input type="submit" class="btn btn-primary" value="Ouvrir le billet"/>
+                </div>
+
+                </form>
+                <datalist id="json-datalist"></datalist>
+            </div><!-- /.box-body -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+{% endblock %}
+
+{% block extendJsBottom %}
+    <script>
+        function myFunction() {
+            var dataList = document.getElementById('json-datalist');
+            $(dataList).empty();
+            var x = document.getElementById("ajax").value;
+            request.open('GET', 'https://nicolasmeloni.ovh/app_dev.php/crm/users.json?search=' + x, true);
+            request.send();
+        }
+
+        var dataList = document.getElementById('json-datalist');
+        var input = document.getElementById('ajax');
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function (response) {
+            if (request.readyState === 4) {
+                if (request.status === 200) {
+                    var jsonOptions = JSON.parse(request.responseText);
+                    jsonOptions.forEach(function (item) {
+                        var option = document.createElement('option');
+                        option.value = item.full_name;
+                        option.dataset.value = item.id;
+                        dataList.appendChild(option);
+                    });
+//                    input.placeholder = 'e.g. toto';
+                } else {
+//                    input.placeholder = 'Couldn\'t load datalist options :(';
+                }
+            }
+        };
+        //        input.placeholder = 'Loading options...';
+        request.open('GET', 'https://nicolasmeloni.ovh/app_dev.php/crm/users.json', true);
+        request.send();
+
+        // Replace the <textarea id="editor1"> with an CKEditor
+        // instance, using the "bbcode" plugin, customizing some of the
+        // editor configuration options to fit BBCode environment.
+        CKEDITOR.replace('form_message', {
+            height: 280,
+            // Add plugins providing functionality popular in BBCode environment.
+            extraPlugins: 'bbcode,smiley,font,colorbutton',
+            // Remove unused plugins.
+            removePlugins: 'filebrowser,format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,wsc',
+            // Remove unused buttons.
+            removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
+            // Width and height are not supported in the BBCode format, so object resizing is disabled.
+            disableObjectResizing: true,
+            // Define font sizes in percent values.
+            fontSize_sizes: "30/30%;50/50%;100/100%;120/120%;150/150%;200/200%;300/300%",
+            // Strip CKEditor smileys to those commonly used in BBCode.
+            smiley_images: [
+                'regular_smile.png', 'sad_smile.png', 'wink_smile.png', 'teeth_smile.png', 'tongue_smile.png',
+                'embarrassed_smile.png', 'omg_smile.png', 'whatchutalkingabout_smile.png', 'angel_smile.png',
+                'shades_smile.png', 'cry_smile.png', 'kiss.png'
+            ],
+            smiley_descriptions: [
+                'smiley', 'sad', 'wink', 'laugh', 'cheeky', 'blush', 'surprise',
+                'indecision', 'angel', 'cool', 'crying', 'kiss'
+            ]
+        });
+    </script>{% endblock %}

@@ -1,0 +1,42 @@
+awhs_crm_homepage:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:redirect
+        route: awhs_crms
+        permanent: true
+
+awhs_crm_users_json:
+    path:     /users.json
+    defaults: { _controller: AWHSCrmBundle:Default:usersJson }
+awhs_crm_create:
+    path:  /ticket/create
+    defaults: { _controller: AWHSCrmBundle:Default:create }
+awhs_crm_show:
+    path:  /ticket/{id}
+    defaults: { _controller: AWHSCrmBundle:Default:afficher }
+
+awhs_crm_resolve:
+    path:  /ticket/{id}/resolve
+    defaults: { _controller: AWHSCrmBundle:Default:resolve }
+awhs_crm_progress:
+    path:  /ticket/{id}/progress
+    defaults: { _controller: AWHSCrmBundle:Default:progress }
+awhs_crm_close:
+    path:  /ticket/{id}/close
+    defaults: { _controller: AWHSCrmBundle:Default:close }
+awhs_crm_open:
+    path:  /ticket/{id}/open
+    defaults: { _controller: AWHSCrmBundle:Default:open }
+
+awhs_crms:
+    path:  /tickets
+    defaults: { _controller: AWHSCrmBundle:Default:list }
+
+awhs_admin_crm_show:
+    path:  /admin/ticket/{id}
+    defaults: { _controller: AWHSCrmBundle:Default:afficher }
+
+awhs_admin_crm_homepage:
+    path:  /admin/tickets
+    defaults: { _controller: AWHSCrmBundle:Default:list }
+

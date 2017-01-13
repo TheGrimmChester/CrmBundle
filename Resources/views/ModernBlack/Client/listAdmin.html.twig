@@ -1,0 +1,73 @@
+{% extends '::'~awhs.template~'/base_dashboard.html.twig' %}
+
+{% trans_default_domain "service" %}
+
+{% block navbarBrand %}CRM <span style="color: #d70909; ">3.0</span>{% endblock %}
+{% block title %}service.title{% endblock %}
+{% block menu_user_money %}{{ client.money }}{% endblock %}
+{% block menu_user_lastip %}{{ client.lastip }}{% endblock %}
+{% block sidebarMenuDashboardActive %} active{% endblock %}
+{% block extendCss %}
+    <style>
+        tr th {
+            text-align: center;
+        }
+
+        tr td {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block contentHeader %}
+    <h1>
+        Vos tickets
+        <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Panel</a></li>
+        <li class="active">Vos tickets</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" style="text-align:right">
+            <a href="{{ path('awhs_ticket_create') }}" class="btn btn-primary">Ouvrir un ticket</a>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th width="100px">Priorité</th>
+                            <th width="150px">Statut</th>
+                            <th width="100px">Afficher</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ticket in tickets %}
+                            <tr style='color: black;'>
+                                <td>
+                                    <a href="{{ path('awhs_admin_ticket_show', {'id': ticket.id}) }}">{{ ticket.title }}</a>
+                                </td>
+                                <td>Basse</td>
+                                <td>{% if ticket.closed == 1 %}<span class="label label-default">Fermé</span>{% else %}
+                                        <span class="label label-primary">Ouvert</span>{% endif %}
+                                    / {% if ticket.resolved == 0 %}<span
+                                            class="label label-danger">Non-résolu</span>{% else %}<span
+                                            class="label label-success">Résolu</span>{% endif %}</td>
+                                <td><a href="{{ path('awhs_admin_ticket_show', {'id': ticket.id}) }}"><img
+                                                src="{{ asset('bundles/awhscore/img/awhs/find.png') }}"
+                                                title="Afficher"/></a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+{% endblock %}

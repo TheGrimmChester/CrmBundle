@@ -1,0 +1,149 @@
+{% extends '::'~awhs.template~'/base_dashboard.html.twig' %}
+
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+{% block menu_user_money %}{{ client.money }}{% endblock %}
+{% block menu_user_lastip %}{{ client.lastip }}{% endblock %}
+{% block sidebarMenuDashboardActive %} active{% endblock %}
+{% block extendJs %}
+    <script src="//cdn.ckeditor.com/4.4.6/standard-all/ckeditor.js"></script>{% endblock %}
+
+{% block navbarBrand %}CRM <span style="color: #d70909; ">3.0</span>{% endblock %}
+{% block fastNavigation %}
+    <ul class="breadcrumb breadcrumb-page">
+    <div class="breadcrumb-label text-dark-gray">Vous êtes ici:</div>
+    <li><a href="{{ path("fos_user_profile_show") }}">Mes tickets</a></li>
+    </ul>{% endblock %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="row">
+            <!-- Page header, center on small screens -->
+            <h1 class="col-xs-12 col-sm-4 text-center text-left-sm"><i class="fa fa-dashboard page-header-icon"></i>&nbsp;&nbsp;Mes
+                tickets</h1>
+        </div>
+    </div> <!-- / .page-header -->{% endblock %}
+
+
+{% block extendCss %}
+    <style>
+        tr th {
+            text-align: center;
+        }
+
+        tr td {
+            text-align: center;
+        }
+
+        .editor img {
+            max-width: 350px;
+            width: 100%;
+            height: auto
+        }
+    </style>
+{% endblock %}
+{% block contentHeader %}
+    <h1>
+        Ticket #{{ ticket.id }}
+        <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Panel</a></li>
+        <li><a href="{{ path('awhs_ticket_homepage') }}"> Tickets</a></li>
+        <li class="active">Ticket #{{ ticket.id }}</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-success">
+                <div class="box-body no-padding chat" id="chat-box">
+                    <div id="statut" class="col-md-12" style="margin-bottom:5px;">
+                        {% if ticket.closed == 0 %}
+                            <a class="btn btn-primary" href="{{ path('awhs_ticket_close', {id: ticket.id}) }}"
+                               title="Fermer le ticket">Fermer</a>
+                        {% else %}
+                            <a class="btn btn-primary" href="{{ path('awhs_ticket_open', {id: ticket.id}) }}"
+                               title="Réouvrir le ticket">Réouvrir</a>
+                        {% endif %}
+
+                        {% if ticket.resolved == 0 %}
+                            <a style="margin-left:10px;" class="btn btn-primary"
+                               href="{{ path('awhs_ticket_resolve', {id: ticket.id}) }}"
+                               title="Marquer le ticket comme résolu">Résolu</a>
+                        {% else %}
+                            <a style="margin-left:10px;" class="btn btn-primary"
+                               href="{{ path('awhs_ticket_progress', {id: ticket.id}) }}"
+                               title="Marquer le ticket comme non-résolu">Non-résolu</a>
+                        {% endif %}
+                    </div>
+                    {% for reponse in liste_messages %}
+                        <!-- chat item -->
+                        <div class="col-md-12 item"
+                             style="background-color:{% if 'ROLE_ADMIN' in reponse.sender.roles %}#D6F4E0{% else %}#F0F0F0{% endif %}">
+                            <img src="{% if 'ROLE_ADMIN' in reponse.sender.roles %}{{ asset('bundles/awhsticket/images/supportfemale.png') }}{% else %}{{ asset('bundles/awhsticket/images/malecostume.png') }}{% endif %}"
+                                 alt="user image"
+                                 {% if 'ROLE_ADMIN' in reponse.sender.roles %}class="online"{% endif %}>
+                            <p class="message">
+                                <a href="#" class="name">
+                                    <small class="text-muted pull-right"><i
+                                                class="fa fa-clock-o"></i> {{ reponse.date|date("d/m/Y à H:i") }}
+                                    </small>
+                                    {{ reponse.sender.username }}</a>
+                            <div class="editor" style="margin-top: 20px;"
+                                 contenteditable=false>{{ reponse.message|e|bbcode_filter('default') }}</div>
+                            {#{{ reponse.message|nl2br }}#}
+                            </p>
+                        </div><!-- /.item -->
+                    {% endfor %}
+                </div><!-- /.chat -->
+                <div class="box-footer">
+                    {{ form_start(form) }}
+                    <div class="col-md-12">
+                        {{ form_label(form.message) }}
+                        {{ form_widget(form.message) }}
+                        {#<div class="input-group-btn">
+                            <button type="submit" name="doAction" class="btn btn-success" value="Envoyer" onclick="return confirm('Voulez vous vraiment envoyer le message?')"><i class="fa fa-plus"></i></button>
+                        </div>#}
+                    </div>
+                    {{ form_rest(form) }}
+                    <div id="footForm" class="col-md-12" style="margin-top:5px;text-align: center;">
+                        <button type="submit" name="doAction" class="btn btn-primary" value="Envoyer"
+                                onclick="return confirm('Voulez vous vraiment envoyer le message?')">Envoyer la réponse
+                        </button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+{% endblock %}
+
+{% block extendJsBottom %}
+    <script>
+        // Replace the <textarea id="editor1"> with an CKEditor
+        // instance, using the "bbcode" plugin, customizing some of the
+        // editor configuration options to fit BBCode environment.
+        CKEDITOR.replace('form_message', {
+            height: 280,
+            // Add plugins providing functionality popular in BBCode environment.
+            extraPlugins: 'bbcode,smiley,font,colorbutton',
+            // Remove unused plugins.
+            removePlugins: 'filebrowser,format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,wsc',
+            // Remove unused buttons.
+            removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
+            // Width and height are not supported in the BBCode format, so object resizing is disabled.
+            disableObjectResizing: true,
+            // Define font sizes in percent values.
+            fontSize_sizes: "30/30%;50/50%;100/100%;120/120%;150/150%;200/200%;300/300%",
+            // Strip CKEditor smileys to those commonly used in BBCode.
+            smiley_images: [
+                'regular_smile.png', 'sad_smile.png', 'wink_smile.png', 'teeth_smile.png', 'tongue_smile.png',
+                'embarrassed_smile.png', 'omg_smile.png', 'whatchutalkingabout_smile.png', 'angel_smile.png',
+                'shades_smile.png', 'cry_smile.png', 'kiss.png'
+            ],
+            smiley_descriptions: [
+                'smiley', 'sad', 'wink', 'laugh', 'cheeky', 'blush', 'surprise',
+                'indecision', 'angel', 'cool', 'crying', 'kiss'
+            ]
+        });
+    </script>{% endblock %}

@@ -1,0 +1,103 @@
+{% extends '::'~awhs.template~'/base_dashboard.html.twig' %}
+
+{% trans_default_domain "service" %}
+
+{% block navbarBrand %}CRM <span style="color: #d70909; ">3.0</span>{% endblock %}
+{% block title %}AWHSPanel - Mes tickets{% endblock %}
+{% block menu_user_money %}{{ client.money }}{% endblock %}
+{% block menu_user_lastip %}{{ client.lastip }}{% endblock %}
+{% block sidebarMenuDashboardActive %} active{% endblock %}
+
+{% block fastNavigation %}
+    <ul class="breadcrumb breadcrumb-page">
+        <div class="breadcrumb-label text-light-gray">Vous êtes ici:</div>
+        <li><a href="/tickets">Ticket</a></li>
+        <li class="active"><a href="/tickets">Liste</a></li>
+    </ul>{% endblock %}
+
+{% block pageHeader %}
+    <div class="page-header">
+    <div class="row">
+        <!-- Page header, center on small screens -->
+        <h1 class="col-xs-12 col-sm-4 text-center text-left-sm"><i class="fa fa-dashboard page-header-icon"></i>&nbsp;&nbsp;Mes
+            tickets</h1>
+        <div class="col-xs-12 col-sm-8">
+            <div class="row">
+                <hr class="visible-xs no-grid-gutter-h">
+                <!-- "Create project" button, width=auto on desktops -->
+                <div class="pull-right col-xs-12 col-sm-auto"><a href="{{ path('awhs_ticket_create') }}"
+                                                                 class="btn btn-primary btn-primary-shaddow btn-labeled"
+                                                                 style="width: 100%;"><span
+                                class="btn-label icon fa fa-plus"></span>Ouvrir un ticket</a></div>
+
+                <!-- Margin -->
+                <div class="visible-xs clearfix form-group-margin"></div>
+            </div>
+        </div>
+    </div>
+    </div> <!-- / .page-header -->{% endblock %}
+
+{% block extendCss %}
+    <style>
+        tr th {
+            text-align: center;
+        }
+
+        tr td {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block contentHeader %}
+    <h1>
+        Vos tickets
+        <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Panel</a></li>
+        <li class="active">Vos tickets</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover table-ordered">
+                        <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th width="100px">Priorité</th>
+                            <th width="150px">Statut</th>
+                            <th width="100px">Afficher</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ticket in tickets %}
+                            <tr style='color: black;'>
+                                <td><a href="{{ path('awhs_crm_show', {'id': ticket.id}) }}">{{ ticket.title }}</a>
+                                </td>
+                                <td>{{ ticket.priority.name }}</td>
+                                <td>
+                                    <table class="table">
+                                        <tr>
+                                            <td>{% if ticket.closed == 1 %}<span class="label label-default">Fermé</span>{% else %}
+                                                    <span class="label label-primary">Ouvert</span>{% endif %}</td>
+                                            <td>{% if ticket.resolved == 0 %}<span
+                                                        class="label label-danger">Non-résolu</span>{% else %}<span
+                                                        class="label label-success">Résolu</span>{% endif %}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td><a href="{{ path('awhs_crm_show', {'id': ticket.id}) }}"><img
+                                                src="{{ asset('bundles/awhscore/img/awhs/find.png') }}"
+                                                title="Afficher"/></a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+{% endblock %}
