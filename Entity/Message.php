@@ -248,6 +248,9 @@ class Message
         return $this;
     }
 
+    /**
+     * Source code from http://php.net/manual/fr/datetime.diff.php#107434
+     */
     function get_timespan_string($older, $newer)
     {
         $Y1 = $older->format('Y');
@@ -298,6 +301,9 @@ class Message
         return $timespan_string;
     }
 
+    /**
+     * Source code from http://php.net/manual/fr/datetime.diff.php#107434
+     */
     function get_days_for_previous_month($current_month, $current_year)
     {
         $previous_month = $current_month - 1;
@@ -318,6 +324,9 @@ class Message
         }
     }
 
+    /**
+     * Source code from http://php.net/manual/fr/datetime.diff.php#107434
+     */
     function create_timespan_string($Y, $m, $d, $H, $i, $s)
     {
         $timespan_string = '';
@@ -353,7 +362,10 @@ class Message
         $timespan_string .= $this->pluralize($s, 'second');
         return $timespan_string;
     }
-
+    
+    /**
+     * Source code from http://php.net/manual/fr/datetime.diff.php#107434
+     */
     function pluralize($count, $text)
     {
         return $count . (($count == 1) ? (" $text") : (" ${text}s"));
